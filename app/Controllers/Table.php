@@ -17,43 +17,20 @@ class Table extends BaseController
 
     public function list() 
     {
-        // $data = json_decode('{
-        //     "draw": 1,
-        //     "recordsTotal": 2,
-        //     "recordsFiltered": 2,
-        //     "data": [
-        //         [
-        //             "Angelica",
-        //             "Ramos",
-        //             "System Architect",
-        //             "London",
-        //             "9th Oct 09",
-        //             "$2,875"
-        //         ],
-        //         [
-        //             "Ashton",
-        //             "Cox",
-        //             "Technical Author",
-        //             "San Francisco",
-        //             "12th Jan 09",
-        //             "$4,800"
-        //         ]
-        //     ]
-        // }');
+        $data = $this->request->getVar('order');
+        $data = array_shift($data);
 
-        // return $this->respond($data);
-        // dd($this->request->uri->getQuery());
+        $lib = new TablesLib('gp1', ['id', 'name', 'phone' , 'job', 'created_at']);
 
-        // draw : pagina
-        // length : numero total de registros por pagina
-
-        $lib = new TablesLib('gp1');
         $response = $lib->getResponse([
             'draw' => $this->request->getVar('draw'),
-            'length' => $this->request->getVar('length')
+            'length' => $this->request->getVar('length'),
+            'start' => $this->request->getVar('start'),
+            'order_column' => $data['column'],
+            'order_direction' => $data['dir']
         ]);
 
         return $this->respond($response);
-        
     }
+    
 }
