@@ -26,6 +26,7 @@ class Table extends BaseController
             'draw' => $this->request->getVar('draw'),
             'length' => $this->request->getVar('length'),
             'start' => $this->request->getVar('start'),
+            'search' => $this->request->getVar('search')['value'],
             'order_column' => $data['column'],
             'order_direction' => $data['dir']
         ]);

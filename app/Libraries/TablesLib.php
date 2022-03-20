@@ -22,22 +22,34 @@ class TablesLib
             'start' => $start,
             'length' => $noRows,
             'order_column' => $column,
-            'order_direction' => $direction
+            'order_direction' => $direction,
+            'search' => $search
         ] = $filters;
 
         $page = ceil(($start - 1) / $noRows + 1);
+        
+        $this->model->orderBy($this->getColumn($column), $direction);
 
-        $data = $this->model
-                    ->orderBy($this->getColumn($column), $direction)
-                    ->paginate($noRows,$this->group, $page);
+        if (!empty($search)) {
+            $this->applyGlobalSearch($search);
+        }
+
+        $data = $this->model->paginate($noRows,$this->group, $page);
 
         return [
             'draw' => $draw,
-            'recordsTotal' => $this->model->pager->getTotal($this->group),
-            'recordsFiltered' =>  $this->model->pager->getTotal($this->group),
+            'recordsTotal' =>  $this->model->countAll(),
+            'recordsFiltered' => $this->model->pager->getTotal($this->group),
             'data' => $this->toApi($data)
         ];
     }    
+
+    private function applyGlobalSearch($match)
+    {
+        foreach ($this->columns as $column) {
+            $this->model->orLike($column, $match);
+        }
+    }
 
     private function getColumn($index)
     {
